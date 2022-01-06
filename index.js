@@ -5,12 +5,41 @@
 
 // Dependencies
 let http = require('http')
+let https = require('https')
 let url = require('url')
 let StringDecoder = require('string_decoder').StringDecoder
-let config = require('./config')
+let config = require('./lib/config')
+let fs = require('fs')
+let _data = require('./lib/data')
+let handlers = require('./lib/handlers')
+let helpers = require('./lib/helpers')
 
-// The server should repond to all requests with a string
-let server = http.createServer((req, res) => {
+// Instantiate the HTTP server
+let httpServer = http.createServer((req, res) => {
+  unifiedServer(req, res)
+})
+
+// Start the HTTP server
+httpServer.listen(config.httpPort, () => {
+  console.log(`The server is listening on port ${config.httpPort}`)
+})
+
+// Instantiate the HTTPS server
+let httpsServerOptions = {
+  key: fs.readFileSync('./https/key.pem'),
+  cert: fs.readFileSync('./https/cert.pem'),
+}
+let httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+  unifiedServer(req, res)
+})
+
+// Start the HTTPS server
+httpsServer.listen(config.httpsPort, () => {
+  console.log(`The server is listening on port ${config.httpsPort}`)
+})
+
+// All the server logic for both the http and the https server
+let unifiedServer = (req, res) => {
   // Get the URL and parse it
   let parsedUrl = url.parse(req.url, true)
 
@@ -54,7 +83,7 @@ let server = http.createServer((req, res) => {
       queryStringObject: queryStringObject,
       method: method,
       headers: headers,
-      payload: buffer,
+      payload: helpers.parseJSONtoObject(buffer),
     }
 
     // Route the request to the handler specified in the router
@@ -73,30 +102,11 @@ let server = http.createServer((req, res) => {
       console.log('Returning this response: ', statusCode, payloadString)
     })
   })
-})
-
-// Start the server
-server.listen(config.port, () => {
-  console.log(
-    `The server is listening on port ${config.port} in ${config.envName} mode`
-  )
-})
-
-// Define the handlers
-let handlers = {}
-
-//Sample handler
-handlers.sample = (data, callback) => {
-  // Callback a http status code, and a payload object
-  callback(406, { name: 'sample handler' })
-}
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-  callback(404)
 }
 
 // Define a request router
 let router = {
-  sample: handlers.sample,
+  ping: handlers.ping,
+  users: handlers.users,
+  tokens: handlers.tokens,
 }

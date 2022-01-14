@@ -6,6 +6,7 @@
 // Dependencies
 let server = require('./lib/server')
 let workers = require('./lib/workers')
+let cli = require('./lib/cli')
 
 // Declare the app
 let app = {}
@@ -16,6 +17,10 @@ app.init = () => {
   server.init()
   // Start the workers
   workers.init()
+
+  setTimeout(() => {
+    cli.init()
+  }, 50)
 }
 
 // Execute

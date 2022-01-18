@@ -1,6 +1,8 @@
+'use strict'
+
 /*
  * Primary file for the API
- *
+ * node --use_srict index-strict.js
  */
 
 // Dependencies
@@ -11,8 +13,11 @@ let cli = require('./lib/cli')
 // Declare the app
 let app = {}
 
+// Declaring a global (strict should catch this mistake)
+foo = 'bar'
+
 // Initialization function
-app.init = (callback) => {
+app.init = () => {
   // Start the server
   server.init()
   // Start the workers
@@ -20,14 +25,11 @@ app.init = (callback) => {
 
   setTimeout(() => {
     cli.init()
-    callback()
   }, 50)
 }
 
-// Self invoking only if required directly
-if (require.main === module) {
-  app.init(() => {})
-}
+// Execute
+app.init()
 
 //Export the app
 module.exports = app

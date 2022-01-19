@@ -4,7 +4,7 @@
  */
 
 // Container for frontend application
-var app = {}
+let app = {}
 
 // Config
 app.config = {
@@ -39,9 +39,9 @@ app.client.request = function (
   callback = typeof callback == 'function' ? callback : false
 
   // For each query string parameter sent, add it to the path
-  var requestUrl = path + '?'
-  var counter = 0
-  for (var queryKey in queryStringObject) {
+  let requestUrl = path + '?'
+  let counter = 0
+  for (let queryKey in queryStringObject) {
     if (queryStringObject.hasOwnProperty(queryKey)) {
       counter++
       // If at least one query string parameter has already been added, preprend new ones with an ampersand
@@ -54,12 +54,12 @@ app.client.request = function (
   }
 
   // Form the http request as a JSON type
-  var xhr = new XMLHttpRequest()
+  let xhr = new XMLHttpRequest()
   xhr.open(method, requestUrl, true)
   xhr.setRequestHeader('Content-type', 'application/json')
 
   // For each header sent, add it to the request
-  for (var headerKey in headers) {
+  for (let headerKey in headers) {
     if (headers.hasOwnProperty(headerKey)) {
       xhr.setRequestHeader(headerKey, headers[headerKey])
     }
@@ -73,13 +73,13 @@ app.client.request = function (
   // When the request comes back, handle the response
   xhr.onreadystatechange = function () {
     if (xhr.readyState == XMLHttpRequest.DONE) {
-      var statusCode = xhr.status
-      var responseReturned = xhr.responseText
+      let statusCode = xhr.status
+      let responseReturned = xhr.responseText
 
       // Callback if requested
       if (callback) {
         try {
-          var parsedResponse = JSON.parse(responseReturned)
+          let parsedResponse = JSON.parse(responseReturned)
           callback(statusCode, parsedResponse)
         } catch (e) {
           callback(statusCode, false)
@@ -89,7 +89,7 @@ app.client.request = function (
   }
 
   // Send the payload as JSON
-  var payloadString = JSON.stringify(payload)
+  let payloadString = JSON.stringify(payload)
   xhr.send(payloadString)
 }
 
@@ -112,13 +112,13 @@ app.logUserOut = function (redirectUser) {
   redirectUser = typeof redirectUser == 'boolean' ? redirectUser : true
 
   // Get the current token id
-  var tokenId =
+  let tokenId =
     typeof app.config.sessionToken.id == 'string'
       ? app.config.sessionToken.id
       : false
 
   // Send the current token to the tokens endpoint to delete it
-  var queryStringObject = {
+  let queryStringObject = {
     id: tokenId,
   }
   app.client.request(
@@ -142,14 +142,14 @@ app.logUserOut = function (redirectUser) {
 // Bind the forms
 app.bindForms = function () {
   if (document.querySelector('form')) {
-    var allForms = document.querySelectorAll('form')
-    for (var i = 0; i < allForms.length; i++) {
+    let allForms = document.querySelectorAll('form')
+    for (let i = 0; i < allForms.length; i++) {
       allForms[i].addEventListener('submit', function (e) {
         // Stop it from submitting
         e.preventDefault()
-        var formId = this.id
-        var path = this.action
-        var method = this.method.toUpperCase()
+        let formId = this.id
+        let path = this.action
+        let method = this.method.toUpperCase()
 
         // Hide the error message (if it's currently shown due to a previous error)
         document.querySelector('#' + formId + ' .formError').style.display =
@@ -162,26 +162,26 @@ app.bindForms = function () {
         }
 
         // Turn the inputs into a payload
-        var payload = {}
-        var elements = this.elements
-        for (var i = 0; i < elements.length; i++) {
+        let payload = {}
+        let elements = this.elements
+        for (let i = 0; i < elements.length; i++) {
           if (elements[i].type !== 'submit') {
             // Determine class of element and set value accordingly
-            var classOfElement =
+            let classOfElement =
               typeof elements[i].classList.value == 'string' &&
               elements[i].classList.value.length > 0
                 ? elements[i].classList.value
                 : ''
-            var valueOfElement =
+            let valueOfElement =
               elements[i].type == 'checkbox' &&
               classOfElement.indexOf('multiselect') == -1
                 ? elements[i].checked
                 : classOfElement.indexOf('intval') == -1
                 ? elements[i].value
                 : parseInt(elements[i].value)
-            var elementIsChecked = elements[i].checked
+            let elementIsChecked = elements[i].checked
             // Override the method of the form if the input's name is _method
-            var nameOfElement = elements[i].name
+            let nameOfElement = elements[i].name
             if (nameOfElement == '_method') {
               method = valueOfElement
             } else {
@@ -211,7 +211,7 @@ app.bindForms = function () {
         }
 
         // If the method is DELETE, the payload should be a queryStringObject instead
-        var queryStringObject = method == 'DELETE' ? payload : {}
+        let queryStringObject = method == 'DELETE' ? payload : {}
 
         // Call the API
         app.client.request(
@@ -228,7 +228,7 @@ app.bindForms = function () {
                 app.logUserOut()
               } else {
                 // Try to get the error from the api, or set a default error message
-                var error =
+                let error =
                   typeof responsePayload.Error == 'string'
                     ? responsePayload.Error
                     : 'An error has occured, please try again'
@@ -255,11 +255,11 @@ app.bindForms = function () {
 
 // Form response processor
 app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
-  var functionToCall = false
+  let functionToCall = false
   // If account creation was successful, try to immediately log the user in
   if (formId == 'accountCreate') {
     // Take the phone and password, and use it to log the user in
-    var newPayload = {
+    let newPayload = {
       phone: requestPayload.phone,
       password: requestPayload.password,
     }
@@ -295,7 +295,7 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
   }
 
   // If forms saved successfully and they have success messages, show them
-  var formsWithSuccessMessages = ['accountEdit1', 'accountEdit2', 'checksEdit1']
+  let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2', 'checksEdit1']
   if (formsWithSuccessMessages.indexOf(formId) > -1) {
     document.querySelector('#' + formId + ' .formSuccess').style.display =
       'block'
@@ -320,10 +320,10 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
 
 // Get the session token from localstorage and set it in the app.config object
 app.getSessionToken = function () {
-  var tokenString = localStorage.getItem('token')
+  let tokenString = localStorage.getItem('token')
   if (typeof tokenString == 'string') {
     try {
-      var token = JSON.parse(tokenString)
+      let token = JSON.parse(tokenString)
       app.config.sessionToken = token
       if (typeof token == 'object') {
         app.setLoggedInClass(true)
@@ -339,7 +339,7 @@ app.getSessionToken = function () {
 
 // Set (or remove) the loggedIn class from the body
 app.setLoggedInClass = function (add) {
-  var target = document.querySelector('body')
+  let target = document.querySelector('body')
   if (add) {
     target.classList.add('loggedIn')
   } else {
@@ -350,7 +350,7 @@ app.setLoggedInClass = function (add) {
 // Set the session token in the app.config object as well as localstorage
 app.setSessionToken = function (token) {
   app.config.sessionToken = token
-  var tokenString = JSON.stringify(token)
+  let tokenString = JSON.stringify(token)
   localStorage.setItem('token', tokenString)
   if (typeof token == 'object') {
     app.setLoggedInClass(true)
@@ -361,11 +361,11 @@ app.setSessionToken = function (token) {
 
 // Renew the token
 app.renewToken = function (callback) {
-  var currentToken =
+  let currentToken =
     typeof app.config.sessionToken == 'object' ? app.config.sessionToken : false
   if (currentToken) {
     // Update the token with a new expiration
-    var payload = {
+    let payload = {
       id: currentToken.id,
       extend: true,
     }
@@ -379,7 +379,7 @@ app.renewToken = function (callback) {
         // Display an error on the form if needed
         if (statusCode == 200) {
           // Get the new token details
-          var queryStringObject = { id: currentToken.id }
+          let queryStringObject = { id: currentToken.id }
           app.client.request(
             undefined,
             'api/tokens',
@@ -412,8 +412,8 @@ app.renewToken = function (callback) {
 // Load data on the page
 app.loadDataOnPage = function () {
   // Get the current page from the body class
-  var bodyClasses = document.querySelector('body').classList
-  var primaryClass = typeof bodyClasses[0] == 'string' ? bodyClasses[0] : false
+  let bodyClasses = document.querySelector('body').classList
+  let primaryClass = typeof bodyClasses[0] == 'string' ? bodyClasses[0] : false
 
   // Logic for account settings page
   if (primaryClass == 'accountEdit') {
@@ -434,13 +434,13 @@ app.loadDataOnPage = function () {
 // Load the account edit page specifically
 app.loadAccountEditPage = function () {
   // Get the phone number from the current token, or log the user out if none is there
-  var phone =
+  let phone =
     typeof app.config.sessionToken.phone == 'string'
       ? app.config.sessionToken.phone
       : false
   if (phone) {
     // Fetch the user data
-    var queryStringObject = {
+    let queryStringObject = {
       phone: phone,
     }
     app.client.request(
@@ -460,10 +460,10 @@ app.loadAccountEditPage = function () {
             responsePayload.phone
 
           // Put the hidden phone field into both forms
-          var hiddenPhoneInputs = document.querySelectorAll(
+          let hiddenPhoneInputs = document.querySelectorAll(
             'input.hiddenPhoneNumberInput'
           )
-          for (var i = 0; i < hiddenPhoneInputs.length; i++) {
+          for (let i = 0; i < hiddenPhoneInputs.length; i++) {
             hiddenPhoneInputs[i].value = responsePayload.phone
           }
         } else {
@@ -480,13 +480,13 @@ app.loadAccountEditPage = function () {
 // Load the dashboard page specifically
 app.loadChecksListPage = function () {
   // Get the phone number from the current token, or log the user out if none is there
-  var phone =
+  let phone =
     typeof app.config.sessionToken.phone == 'string'
       ? app.config.sessionToken.phone
       : false
   if (phone) {
     // Fetch the user data
-    var queryStringObject = {
+    let queryStringObject = {
       phone: phone,
     }
     app.client.request(
@@ -498,7 +498,7 @@ app.loadChecksListPage = function () {
       function (statusCode, responsePayload) {
         if (statusCode == 200) {
           // Determine how many checks the user has
-          var allChecks =
+          let allChecks =
             typeof responsePayload.checks == 'object' &&
             responsePayload.checks instanceof Array &&
             responsePayload.checks.length > 0
@@ -508,7 +508,7 @@ app.loadChecksListPage = function () {
             // Show each created check as a new row in the table
             allChecks.forEach(function (checkId) {
               // Get the data for the check
-              var newQueryStringObject = {
+              let newQueryStringObject = {
                 id: checkId,
               }
               app.client.request(
@@ -519,20 +519,20 @@ app.loadChecksListPage = function () {
                 undefined,
                 function (statusCode, responsePayload) {
                   if (statusCode == 200) {
-                    var checkData = responsePayload
+                    let checkData = responsePayload
                     // Make the check data into a table row
-                    var table = document.getElementById('checksListTable')
-                    var tr = table.insertRow(-1)
+                    let table = document.getElementById('checksListTable')
+                    let tr = table.insertRow(-1)
                     tr.classList.add('checkRow')
-                    var td0 = tr.insertCell(0)
-                    var td1 = tr.insertCell(1)
-                    var td2 = tr.insertCell(2)
-                    var td3 = tr.insertCell(3)
-                    var td4 = tr.insertCell(4)
+                    let td0 = tr.insertCell(0)
+                    let td1 = tr.insertCell(1)
+                    let td2 = tr.insertCell(2)
+                    let td3 = tr.insertCell(3)
+                    let td4 = tr.insertCell(4)
                     td0.innerHTML = responsePayload.method.toUpperCase()
                     td1.innerHTML = responsePayload.protocol + '://'
                     td2.innerHTML = responsePayload.url
-                    var state =
+                    let state =
                       typeof responsePayload.state == 'string'
                         ? responsePayload.state
                         : 'unknown'
@@ -574,14 +574,14 @@ app.loadChecksListPage = function () {
 // Load the checks edit page specifically
 app.loadChecksEditPage = function () {
   // Get the check id from the query string, if none is found then redirect back to dashboard
-  var id =
+  let id =
     typeof window.location.href.split('=')[1] == 'string' &&
     window.location.href.split('=')[1].length > 0
       ? window.location.href.split('=')[1]
       : false
   if (id) {
     // Fetch the check data
-    var queryStringObject = {
+    let queryStringObject = {
       id: id,
     }
     app.client.request(
@@ -593,8 +593,8 @@ app.loadChecksEditPage = function () {
       function (statusCode, responsePayload) {
         if (statusCode == 200) {
           // Put the hidden id field into both forms
-          var hiddenIdInputs = document.querySelectorAll('input.hiddenIdInput')
-          for (var i = 0; i < hiddenIdInputs.length; i++) {
+          let hiddenIdInputs = document.querySelectorAll('input.hiddenIdInput')
+          for (let i = 0; i < hiddenIdInputs.length; i++) {
             hiddenIdInputs[i].value = responsePayload.id
           }
 
@@ -611,10 +611,10 @@ app.loadChecksEditPage = function () {
             responsePayload.method
           document.querySelector('#checksEdit1 .timeoutInput').value =
             responsePayload.timeoutSeconds
-          var successCodeCheckboxes = document.querySelectorAll(
+          let successCodeCheckboxes = document.querySelectorAll(
             '#checksEdit1 input.successCodesInput'
           )
-          for (var i = 0; i < successCodeCheckboxes.length; i++) {
+          for (let i = 0; i < successCodeCheckboxes.length; i++) {
             if (
               responsePayload.successCodes.indexOf(
                 parseInt(successCodeCheckboxes[i].value)

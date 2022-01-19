@@ -4,19 +4,19 @@
  */
 
 // Dependencies
-var app = require('./../index')
-var assert = require('assert')
-var http = require('http')
-var config = require('./../lib/config')
+let app = require('./../index')
+let assert = require('assert')
+let http = require('http')
+let config = require('./../lib/config')
 
 // Holder for Tests
-var api = {}
+let api = {}
 
 // Helpers
-var helpers = {}
+let helpers = {}
 helpers.makeGetRequest = function (path, callback) {
   // Configure the request details
-  var requestDetails = {
+  let requestDetails = {
     protocol: 'http:',
     hostname: 'localhost',
     port: config.httpPort,
@@ -28,7 +28,7 @@ helpers.makeGetRequest = function (path, callback) {
   }
 
   // Send the request
-  var req = http.request(requestDetails, function (res) {
+  let req = http.request(requestDetails, function (res) {
     callback(res)
   })
   req.end()

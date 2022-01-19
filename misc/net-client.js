@@ -5,20 +5,20 @@
  */
 
 // Dependencies
-var net = require('net')
+let net = require('net')
 
 // Define the message to send
-var outboundMessage = 'ping'
+let outboundMessage = 'ping'
 
 // Create the client
-var client = net.createConnection({ port: 6000 }, function () {
+let client = net.createConnection({ port: 6000 }, function () {
   // Send the message
   client.write(outboundMessage)
 })
 
 // When the server writes back, log what it says then kill the client
 client.on('data', function (inboundMessage) {
-  var messageString = inboundMessage.toString()
+  let messageString = inboundMessage.toString()
   console.log('I wrote ' + outboundMessage + ' and they said ' + messageString)
   client.end()
 })

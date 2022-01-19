@@ -36,7 +36,7 @@ app.init = () => {
   // Start an example script that has issues (throws an error)
   debugger
   // Set foo at 1
-  var foo = 1
+  let foo = 1
   console.log('Just assigned 1 to foo')
   debugger
 

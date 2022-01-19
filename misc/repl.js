@@ -5,7 +5,7 @@
  */
 
 // Dependencies
-var repl = require('repl')
+let repl = require('repl')
 
 // Start the REPL
 repl.start({

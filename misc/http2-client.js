@@ -5,18 +5,18 @@
  */
 
 // Dependencies
-var http2 = require('http2')
+let http2 = require('http2')
 
 // Create client
-var client = http2.connect('http://localhost:6000')
+let client = http2.connect('http://localhost:6000')
 
 // Create a request
-var req = client.request({
+let req = client.request({
   ':path': '/',
 })
 
 // When message is received, add the pieces of it together until you reach the end
-var str = ''
+let str = ''
 req.on('data', function (chunk) {
   str += chunk
 })

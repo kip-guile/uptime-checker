@@ -3,7 +3,7 @@
  *
  */
 
-// Override the NODE_ENV variable
+// Override the NODE_ENV letiable
 process.env.NODE_ENV = 'testing'
 
 // Application logic for the test runner
@@ -18,11 +18,11 @@ _app.tests.api = require('./api')
 
 // Count all the tests
 _app.countTests = function () {
-  var counter = 0
-  for (var key in _app.tests) {
+  let counter = 0
+  for (let key in _app.tests) {
     if (_app.tests.hasOwnProperty(key)) {
-      var subTests = _app.tests[key]
-      for (var testName in subTests) {
+      let subTests = _app.tests[key]
+      for (let testName in subTests) {
         if (subTests.hasOwnProperty(testName)) {
           counter++
         }
@@ -34,18 +34,18 @@ _app.countTests = function () {
 
 // Run all the tests, collecting the errors and successes
 _app.runTests = function () {
-  var errors = []
-  var successes = 0
-  var limit = _app.countTests()
-  var counter = 0
-  for (var key in _app.tests) {
+  let errors = []
+  let successes = 0
+  let limit = _app.countTests()
+  let counter = 0
+  for (let key in _app.tests) {
     if (_app.tests.hasOwnProperty(key)) {
-      var subTests = _app.tests[key]
-      for (var testName in subTests) {
+      let subTests = _app.tests[key]
+      for (let testName in subTests) {
         if (subTests.hasOwnProperty(testName)) {
           ;(function () {
-            var tmpTestName = testName
-            var testValue = subTests[testName]
+            let tmpTestName = testName
+            let testValue = subTests[testName]
             // Call the test
             try {
               testValue(function () {

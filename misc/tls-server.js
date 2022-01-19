@@ -5,25 +5,25 @@
  */
 
 // Dependencies
-var tls = require('tls')
-var fs = require('fs')
-var path = require('path')
+let tls = require('tls')
+let fs = require('fs')
+let path = require('path')
 
 // Server options
-var options = {
+let options = {
   key: fs.readFileSync(path.join(__dirname, '/../https/key.pem')),
   cert: fs.readFileSync(path.join(__dirname, '/../https/cert.pem')),
 }
 
 // Create the server
-var server = tls.createServer(options, function (connection) {
+let server = tls.createServer(options, function (connection) {
   // Send the word "pong"
-  var outboundMessage = 'pong'
+  let outboundMessage = 'pong'
   connection.write(outboundMessage)
 
   // When the client writes something, log it out
   connection.on('data', function (inboundMessage) {
-    var messageString = inboundMessage.toString()
+    let messageString = inboundMessage.toString()
     console.log(
       'I wrote ' + outboundMessage + ' and they said ' + messageString
     )

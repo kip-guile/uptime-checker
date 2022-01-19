@@ -5,10 +5,10 @@
  */
 
 // Dependencies
-var http2 = require('http2')
+let http2 = require('http2')
 
 // Init the server
-var server = http2.createServer()
+let server = http2.createServer()
 
 // On a stream, send back hello world html
 server.on('stream', function (stream, headers) {

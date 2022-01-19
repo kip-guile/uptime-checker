@@ -5,14 +5,14 @@
  */
 
 // Dependencies
-var async_hooks = require('async_hooks') // Track lifecycle of async processes
-var fs = require('fs')
+let async_hooks = require('async_hooks') // Track lifecycle of async processes
+let fs = require('fs')
 
 // Target execution context
-var targetExecutionContext = false
+let targetExecutionContext = false
 
 // Write an arbitrary async function
-var whatTimeIsIt = function (callback) {
+let whatTimeIsIt = function (callback) {
   setInterval(function () {
     fs.writeSync(
       1,
@@ -30,7 +30,7 @@ whatTimeIsIt(function (time) {
 })
 
 // Hooks
-var hooks = {
+let hooks = {
   init(asyncId, type, triggerAsyncId, resource) {
     fs.writeSync(1, 'Hook init ' + asyncId + '\n')
   },
@@ -54,5 +54,5 @@ var hooks = {
 }
 
 // Create a new AsyncHook instance. All of these callbacks are optional.
-var asyncHook = async_hooks.createHook(hooks)
+let asyncHook = async_hooks.createHook(hooks)
 asyncHook.enable()
